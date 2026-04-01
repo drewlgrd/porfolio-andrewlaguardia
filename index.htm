@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andrew Laguardia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Gilda+Display&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --discord-serverlist: #1e1f22;
+            --discord-sidebar: #2b2d31;
+            --discord-main: #313338;
+            --discord-footer: #232428;
+            --discord-blurple: #5865f2;
+            --discord-text: #dbdee1;
+            --discord-muted: #949ba4;
+            --border-color: rgba(255, 255, 255, 0.08); 
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--discord-serverlist);
+            color: var(--discord-text);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .discord-window {
+            display: flex;
+            width: 1050px;
+            height: 650px;
+            background-color: var(--discord-main);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        /* SERVER LIST */
+        .server-list {
+            width: 72px;
+            background-color: var(--discord-serverlist);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 12px;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .server-icon {
+            width: 48px;
+            height: 48px;
+            background-color: #313338;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .server-icon:hover {
+            border-radius: 15px;
+            background-color: var(--discord-blurple);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            background-color: var(--discord-sidebar);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            border-right: 1px solid var(--border-color); 
+        }
+
+        .channel-header {
+            padding: 0 16px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 15px;
+            color: white;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+        }
+
+        .nav-content {
+            flex-grow: 1;
+            padding: 15px 8px;
+            overflow-y: auto;
+        }
+
+        .menu-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--discord-muted);
+            font-weight: bold;
+            padding: 0 8px;
+            margin: 16px 0 8px 0;
+            display: block;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: var(--discord-muted);
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.1s;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background-color: #35373c;
+            color: var(--discord-text);
+        }
+
+        .nav-item::before {
+            content: "# ";
+            opacity: 0.5;
+        }
+
+        .sidebar-footer {
+            background-color: var(--discord-footer);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            background-color: var(--discord-blurple);
+            border-radius: 50%;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--discord-main);
+            overflow: hidden;
+        }
+
+        .top-bar {
+            height: 48px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .content-container {
+            flex-grow: 1;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        .page-content {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            padding: 30px 40px;
+            box-sizing: border-box;
+            scroll-snap-align: start;
+        }
+
+        .greet {
+            font-family: 'Cinzel', serif;
+            font-size: 44px;
+            color: white;
+            margin: 0 0 5px 0; 
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 44px;
+            color: var(--discord-blurple);
+             margin: 0 0 10px 0; 
+        }
+
+        .home-layout {
+            display: block;
+            width: 100%;
+        }
+
+        .gsus-img {
+            width: 220px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            float: left;
+            margin-right: 25px;
+            margin-bottom: 15px;
+        }
+
+        .home-text {
+            font-family: 'Gilda Display', serif;
+            font-size: 22px;
+            color: var(--discord-text);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            padding-top: 20px;
+            max-width: 800px;
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .image-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: var(--discord-sidebar);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .image-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            border-color: var(--discord-blurple);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-label {
+            margin-top: 12px;
+            font-size: 18px;
+            color: var(--discord-text);
+            font-weight: 500;
+        }
+
+        .valorant-rank {
+            width: 220px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        /*Skills*/
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            width: 100%;
+        }
+
+        .skill-card {
+            background-color: var(--discord-main);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.2s;
+            border: 1px solid var(--border-color);
+        }
+
+        .skill-card:hover {
+            background-color: #383a40;
+        }
+
+        .skill-icon {
+            background-color: var(--discord-sidebar);
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
+            font-weight: 800;
+            font-size: 24px;
+        }
+
+    /*Colors*/
+        .html-icon { color: #E44D26; }
+        .css-icon { color: #264DE4; }
+        .python-icon { color: #FFD43B; }
+        .c-icon { color: #5C6BC0; }
+        .js-icon { color: #23a55a;}
+        .ct-icon {color: red;}
+
+        .skill-title {
+            color: white;
+            font-size: 18px;
+            margin: 0 0 8px 0;
+        }
+
+        .skill-desc {
+            color: var(--discord-muted);
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .skill-card:hover .html-icon {
+            text-shadow: 0 0 8px rgba(236, 65, 13, 0.4);
+        }
+
+        .skill-card:hover .css-icon {
+            text-shadow: 0 0 8px rgba(13, 70, 224, 0.74);
+        }
+
+        .skill-card:hover .python-icon {
+            text-shadow: 0 0 8px rgba(240, 255, 33, 0.788);
+        }
+
+        .skill-card:hover .c-icon {
+            text-shadow: 0 0 8px rgba(4, 106, 189, 0.877);
+        }
+
+        .skill-card:hover .js-icon {
+            text-shadow: 0 0 8px rgba(35, 165, 90, 0.4);
+        }
+
+        .skill-card:hover .ct-icon {
+            text-shadow: 0 0 8px rgba(242, 63, 67, 0.4);
+        }
+
+        /*Contacts*/
+        :root {
+            --discord-dark: #313338;
+            --discord-card: #2b2d31;
+            --discord-blurple: #5865f2;
+            --discord-text: #dbdee1;
+            --discord-header: #ffffff;
+            --discord-muted: #b5bac1;
+        }
+
+        body {
+            background-color: var(--discord-dark);
+            color: var(--discord-text);
+            font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .greger {
+            text-align: center;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            border: 1px solid #147db9;
+            color: #0a7abb;
+            background-color: #1e1f22;
+            padding: 4px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            color: var(--discord-header);
+            font-size: 3rem;
+            margin: 0 0 10px 0;
+            font-weight: 800;
+        }
+
+        p.subtitle {
+            color: var(--discord-muted);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+        }
+
+        .card {
+            background-color: var(--discord-card);
+            padding: 30px;
+            border-radius: 8px;
+            transition: transform 0.2s, background-color 0.2s;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.1);
+    
+            width: 280px; 
+            box-sizing: border-box;
+        }
+
+        .card:hover {
+            background-color: #35373c;
+            transform: translateY(-5px);
+        }
+
+        .card i {
+            font-size: 40px;
+            background: white;
+            color: #2b2d31;
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            border-radius: 18px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: var(--discord-header);
+            margin: 10px 0 5px 0;
+            font-size: 1.2rem;
+        }
+
+        .card span {
+            color: var(--discord-muted);
+            font-size: 0.9rem;
+        }
+
+        .phone-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .phone-icon {
+            background: white;
+            color: black;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .phone-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--discord-header);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /*Footer*/
+        .discord-footer {
+            background-color: #2b2d31; 
+            padding: 40px 0;
+            margin-top: 60px;
+            width: 100%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .back-to-top {
+            color: #e3a008; 
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: opacity 0.2s;
+        }
+
+        .back-to-top:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: #949ba4; 
+            font-size: 14px;
+            margin-top: 15px;
+            font-family: 'Whitney', sans-serif;
+        }
+
+        /* Scrollbar Styling */
+        .content-container::-webkit-scrollbar { width: 8px; }
+        .content-container::-webkit-scrollbar-thumb { background: #1e1f22; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    
+    <div class="discord-window">
+        <aside class="server-list">
+            <a href="#home" class="server-icon" style="background-color: var(--discord-blurple);">AL</a>
+            <div style="width: 32px; height: 2px; background: #35373c; border-radius: 1px; margin: 4px 0;"></div>
+            <a href="#valorant" class="server-icon">V</a>
+            <a href="#league" class="server-icon">L</a>
+            <a href="#apex" class="server-icon">A</a>
+            <a href="#overwatch" class="server-icon">O</a>
+        </aside>
+
+        <aside class="sidebar">
+            <div class="channel-header">Andrew Laguardia</div>
+            <div class="nav-content">
+                <span class="menu-label">Channels</span>
+                <a href="#home" class="nav-item">home</a>
+                <a href="#about" class="nav-item">about me</a>
+                <a href="#skills" class="nav-item">skills</a>
+                <a href="#projects" class="nav-item">projects</a>
+                <a href="#contacts" class="nav-item">contacts</a>
+                
+                <span class="menu-label">Projects</span>
+                <a href="#valorant" class="nav-item" style="padding-left: 20px;">valorant</a>
+                <a href="#league" class="nav-item" style="padding-left: 20px;">league of legends</a>
+                <a href="#apex" class="nav-item" style="padding-left: 20px;">apex legends</a>
+                <a href="#overwatch" class="nav-item" style="padding-left: 20px;">overwatch</a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="avatar-circle"></div>
+                <div style="font-size: 13px;">
+                    <span style="display:block; font-weight: bold; color: white;">esu</span>
+                    <span style="color: var(--discord-muted); font-size: 11px;">#sawtea.</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div><span style="color: var(--discord-muted);">#</span> Portfolio</div>
+                <div style="font-size: 20px; opacity: 0.6; cursor: pointer;">✕</div>
+            </div>
+
+            <div class="content-container">
+                
+                <section id="home" class="page-content">
+                    <p>Computer Science Student • Our Lady of Fatima</p>
+                    <h1 class="greet">HI, I'M</h1>
+                    <h1 class="logo-text">ANDREW LAGUARDIA</h1>
+                    <div class="home-layout">
+                        <div class="home-text">
+                            <p>Hi! I'm a first-year Computer Science student currently learning and improving my skills in CS, HTML, and PC assembly.</p>
+                            <p>I'm passionate about growing in the tech field and gaining hands-on experience as I continue my journey, I enjoy exploring how systems work, building simple web projects, and gaining hands-on experience with computer hardware.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="about" class="page-content" style="background-color: #2b2d31;">
+                    <h1 class="logo-text" style="color: white;">ABOUT ME</h1>
+                    <div class="home-layout">
+                        <img src="https://image2url.com/r2/default/images/1774959244886-464b955f-dbbd-4335-be33-d08338078c05.png" class="gsus-img" alt="gsus">
+                        
+                        <div class="home-text">
+                            <p style="margin-top: 0;">I'm <strong>Andrew Laguardia</strong>, a first-year Computer Science student with a growing passion for technology and problem-solving. As I begin my journey in this field, I am building a strong foundation in programming, logical thinking, and computational concepts.</p>
+                            
+                            <p>I want to have a lot of friends not just what I have right now, but also as much as I can have, I wanna learn about alot of things not just about your life but also about hobbies that i can learn.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="skills" class="page-content">
+                    <h1 class="logo-text" style="color: white;">SKILLS</h1>
+
+                <div class="skills-grid">
+                <div class="skill-card">
+                <div class="skill-icon html-icon">5</div>
+                        <h2 class="skill-title">HTML</h2>
+                        <p class="skill-desc">Semantic structure and accessible page building.</p>
+                </div>
+
+                <div class="skill-card">
+                <div class="skill-icon css-icon">3</div>
+                    <h2 class="skill-title">CSS</h2>
+                    <p class="skill-desc">Responsive styling, layout, and visual polish.</p>
+                </div>
+
+                <div class="skill-card">
+                <div class="skill-icon python-icon">Py</div>
+                    <h2 class="skill-title">Python</h2>
+                    <p class="skill-desc">Problem-solving, logic building, and scripting practice.</p>
+                </div>
+
+                <div class="skill-card">
+                <div class="skill-icon c-icon">C</div>
+                    <h2 class="skill-title">C</h2>
+                    <p class="skill-desc">Core programming fundamentals and structured thinking.</p>
+                </div>
+
+                <div class="skill-card">
+                <div class="skill-icon js-icon">JS</div>
+                    <h2 class="skill-title">JavaScript</h2>
+                    <p class="skill-desc">Dynamic interactivity, DOM manipulation, and functional logic.</p>
+            </div>
+
+            <div class="skill-card">
+            <div class="skill-icon ct-icon">CT</div>
+                <h2 class="skill-title">Critical Thinking</h2>
+                <p class="skill-desc">Analytical reasoning, problem decomposition, and efficient debugging.</p>
+            </div>
+        </div>
+    </section>
+                
+                <section id="projects" class="page-content" style="background-color: #2b2d31;">
+                    <h1 class="logo-text" style="color: white;">PROJECTS</h1>
+                    <div class="project-grid">
+                        <div class="project-card">
+                            <div class="image-wrapper"><img src="https://image2url.com/r2/default/images/1774966682978-38633f10-b802-4d78-984f-88405e1e356a.png" alt="valorant"></div>
+                            <p class="project-label">Valorant</p>
+                        </div>
+                        <div class="project-card">
+                            <div class="image-wrapper"><img src="https://image2url.com/r2/default/images/1775012317782-8fe34771-c482-427f-83f3-ac7a2c0f8aa0.png" alt="league"></div>
+                            <p class="project-label">League of Legends</p>
+                        </div>
+                        <div class="project-card">
+                            <div class="image-wrapper"><img src="https://image2url.com/r2/default/images/1775011980778-27a29e2a-6e2c-4aa6-8eb0-9aa8f6b45248.png" alt="apex"></div>
+                            <p class="project-label">Apex Legends</p>
+                        </div>
+                        <div class="project-card">
+                            <div class="image-wrapper"><img src="https://image2url.com/r2/default/images/1775012665214-9c411563-1646-49f7-9534-0159f6da4661.png" alt="overwatch"></div>
+                            <p class="project-label">Overwatch</p>
+                        </div>
+                    </div>
+                </section>
+
+    <section id="contacts" class="page-content">
+                    <h1 class="logo-text" style="color: white;">CONTACTS</h1>
+                    <div class="greger">
+    <p class="subtitle">Don’t hesitate to get in touch—I’m always happy to explore new opportunities.</p>
+    <div class="grid">
+        <a href="#" class="card">
+            <i class="fab fa-facebook-f"></i>
+            <h3>Facebook</h3>
+            <span>@Andrew Laguardia</span>
+        </a>
+
+        <a href="#" class="card">
+            <i class="fab fa-github"></i>
+            <h3>GitHub</h3>
+            <span>@drewlgrd</span>
+        </a>
+
+        <a href="#" class="card">
+            <i class="fab fa-instagram"></i>
+            <h3>Instagram</h3>
+            <span>@esuseuu</span>
+        </a>
+    </div>
+
+    <div class="phone-section">
+        <div class="phone-icon">
+            <i class="fas fa-phone-alt"></i>
+        </div>
+        <div class="phone-number">+63 909 887 9525</div>
+    </div>
+    <button class="badge">Get in Touch</button>
+</div>
+    <footer class="discord-footer">
+    <a href="#home" class="back-to-top">Back to Top</a>
+    <p class="copyright">© 2026 Andrew Laguardia. All Rights Reserved.</p>
+    </footer>
+    </section>                   
+        </main>
+    </div>
+</body>
+</html>
